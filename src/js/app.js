@@ -25,10 +25,15 @@
         var termRre = new RegExp("(?<!<[^>]*)" + term + "®", "g");
         var termRe = new RegExp("(?<!<[^>]*)" + term, "g");
 
-        function replaceTerms() {
-          var text = $(this).html();
-          text = text.replace(termRre, '<span class="gt-times">' + term + '<sup>®</sup></span>');
-          $(this).html(text);
+        function replaceInEl(re) {
+          return function(){
+            var text = $(this).html();
+            text = text.replace(
+              re,
+              '<span class="gt-times">' + term + "<sup>®</sup></span>"
+            );
+            $(this).html(text);
+          }
         }
 
         $.each(regContainers, function (j, container) {
@@ -36,26 +41,10 @@
           containerSelectorsNoReg.push(container + ':contains(' + term + ')');
         });
 
-        $(containerSelectors.join(",")).each(function () {
-          var text = $(this).html();
-          text = text.replace(
-            termRre,
-            '<span class="gt-times">' + term + "<sup>®</sup></span>"
-          );
-          $(this).html(text);
-        });
-
-        var termRe = new RegExp(term, "g");
+        $(containerSelectors.join(",")).each(replaceInEl(termRre));
         $(containerSelectorsNoReg.join(","))
           .not(".gt-times")
-          .each(function () {
-            var text = $(this).html();
-            text = text.replace(
-              termRe,
-              '<span class="gt-times">' + term + "<sup>®</sup></span>"
-            );
-            $(this).html(text);
-          });
+          .each(replaceInEl(termRe));
       });
     });
   }
