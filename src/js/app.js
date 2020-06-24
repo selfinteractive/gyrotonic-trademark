@@ -9,9 +9,9 @@
     'display: none;' +
   '}';
 
-  var regTypes = ['GYROTONIC EXPANSION SYSTEM', 'GYROTONIC', 'GYROKINESIS', 'GYROTONER'],
-    regContainers = ['span', 'p', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'],
-    regBreakout = ['strong'];
+  var regTypes = ['GYROTONIC EXPANSION SYSTEM', 'GYROTONIC', 'GYROKINESIS', 'GYROTONER'];
+  var regContainers = ['span', 'p', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'];
+  var regBreakout = ['strong'];
 
   function replaceTrademarks() {
     jQuery(function($){
@@ -19,36 +19,43 @@
       $('body').append('<style>' + cssRules + '</style>');
 
       $.each(regTypes, function (i, term) {
-        var containerSelectors = [],
-          containerSelectorsNoReg = [],
-          breakoutSelectors = [];
+        var containerSelectors = [];
+        var containerSelectorsNoReg = [];
 
-        $.each(regBreakout, function (j, container) {
-          breakoutSelectors.push(container + ':contains(' + term + ')');
-        });
+        var termRre = new RegExp("(?<!<[^>]*)" + term + "®", "g");
+        var termRe = new RegExp("(?<!<[^>]*)" + term, "g");
 
-        $(breakoutSelectors.join(',')).each(function () {
-          // $(this).replaceWith( $(this).html() );
-        });
+        function replaceTerms() {
+          var text = $(this).html();
+          text = text.replace(termRre, '<span class="gt-times">' + term + '<sup>®</sup></span>');
+          $(this).html(text);
+        }
 
         $.each(regContainers, function (j, container) {
           containerSelectors.push(container + ':contains(' + term + '®),' + container + ':contains(' + term + '&reg;)');
           containerSelectorsNoReg.push(container + ':contains(' + term + ')');
         });
 
-        var termRre = new RegExp(term + '®', 'g');
-        $(containerSelectors.join(',')).each(function () {
+        $(containerSelectors.join(",")).each(function () {
           var text = $(this).html();
-          text = text.replace(termRre, '<span class="gt-times">' + term + '<sup>®</sup></span>');
+          text = text.replace(
+            termRre,
+            '<span class="gt-times">' + term + "<sup>®</sup></span>"
+          );
           $(this).html(text);
         });
 
-        var termRe = new RegExp(term, 'g');
-        $(containerSelectorsNoReg.join(',')).not('.gt-times').each(function () {
-          var text = $(this).html();
-          text = text.replace(termRe, '<span class="gt-times">' + term + '<sup>®</sup></span>');
-          $(this).html(text);
-        });
+        var termRe = new RegExp(term, "g");
+        $(containerSelectorsNoReg.join(","))
+          .not(".gt-times")
+          .each(function () {
+            var text = $(this).html();
+            text = text.replace(
+              termRe,
+              '<span class="gt-times">' + term + "<sup>®</sup></span>"
+            );
+            $(this).html(text);
+          });
       });
     });
   }
