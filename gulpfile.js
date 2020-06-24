@@ -33,12 +33,21 @@ function jsDev(cb) {
   cb();
 }
 function js(cb) {
-  gulp.src("src/js/*js")
-    .pipe(babel({
-      presets: ['@babel/preset-env']
-    }))
+  gulp
+    .src("src/js/*js")
+    .pipe(
+      babel({
+        presets: ["@babel/preset-env"],
+      })
+    )
     .pipe(concat("gyrotonic-trademark.js"))
-    .pipe(uglify())
+    .pipe(
+      uglify({
+        output: {
+          comments: "some"
+        }
+      })
+    )
     .pipe(gulp.dest("dist/js"));
   cb();
 }

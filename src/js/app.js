@@ -1,3 +1,7 @@
+/*
+@preserve
+v1.0.1
+*/
 (function (jQuery) {
   var cssRules = '.gt-times {'+
     'font-family: "times new roman";' +
