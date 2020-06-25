@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.0.1
+v1.0.2
 */
 (function (jQuery) {
   var cssRules = '.gt-times {'+
@@ -29,8 +29,14 @@ v1.0.1
         var termRre = new RegExp("(?<!<[^>]*)" + term + "®", "g");
         var termRe = new RegExp("(?<!<[^>]*)" + term, "g");
 
-        function replaceInEl(re) {
+        function replaceInEl(re, contains) {
           return function(){
+            // make sure we actually need to replace this one by seeing if it
+            // has TMs outside of its children's content
+            var $clone = $(this).clone();
+            $clone.find('*').remove();
+            if(!$clone.is(contains)) return;
+
             var text = $(this).html();
             text = text.replace(
               re,
@@ -45,10 +51,15 @@ v1.0.1
           containerSelectorsNoReg.push(container + ':contains(' + term + ')');
         });
 
-        $(containerSelectors.join(",")).each(replaceInEl(termRre));
+        $(containerSelectors.join(",")).each(
+          replaceInEl(
+            termRre,
+            ":contains(" + term + "®),:contains(" + term + "&reg;)"
+          )
+        );
         $(containerSelectorsNoReg.join(","))
           .not(".gt-times")
-          .each(replaceInEl(termRe));
+          .each(replaceInEl(termRe, ':contains(' + term + ')'));
       });
     });
   }
