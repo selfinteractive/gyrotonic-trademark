@@ -1,6 +1,8 @@
 # gyrotonic-trademark
 A JS tool for automatically styling any occurrences of GYROTONIC &amp; GYROKINESIS trademarks on a webpage.
 
+More info: https://www.gyrotonic.com/terms-of-use/trademark-formatting-code/
+
 # Running
 `npm start` will launch dev mode and open an autorefreshing test page on which the script is run.
 
