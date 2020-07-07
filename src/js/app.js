@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.0.4
+v1.0.5
 */
 (function (jQuery) {
   var cssRules =
@@ -13,7 +13,7 @@ v1.0.4
     ".gt-corsiva {" +
     'font-family: "Monotype Corsiva W01";' +
     "font-style: normal !important;" +
-    "font-weight: bold;" +
+    "font-weight: normal;" +
     "text-transform: none !important;" +
     "}" +
     ".gt-times .gt-times sup {" +
