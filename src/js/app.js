@@ -44,10 +44,12 @@ v1.0.5
   ];
   var regBreakout = ["strong"];
 
-  function replaceTrademarks() {
-    jQuery(function ($) {
-      $("body").append("<style>" + cssRules + "</style>");
+  function appendCss() {
+    $("body").append("<style>" + cssRules + "</style>");
+  }
 
+  function replaceTrademarks(selectorPrepend) {
+    jQuery(function ($) {
       $.each(regTypes, function (font, termList) {
         $.each(termList, function (i, term) {
           var containerSelectors = [];
@@ -74,18 +76,25 @@ v1.0.5
           }
 
           $.each(regContainers, function (j, container) {
+            var prepend = selectorPrepend ? selectorPrepend + " " : "";
             containerSelectors.push(
-              container +
+              prepend +
+                container +
                 ":contains(" +
                 term +
                 "®)," +
+                prepend +
                 container +
                 ":contains(" +
                 term +
                 "&reg;)"
             );
-            containerSelectorsNoReg.push(container + ":contains(" + term + ")");
+            containerSelectorsNoReg.push(
+              prepend + container + ":contains(" + term + ")"
+            );
           });
+
+          console.log(containerSelectors);
 
           $(containerSelectors.join(",")).each(
             replaceInEl(
@@ -126,6 +135,8 @@ v1.0.5
       _injectJquery();
       return setTimeout(_init, 200);
     }
+
+    appendCss();
 
     // allow end user to disable auto-replace with window.GT_MANUAL constant
     if (!window.GT_MANUAL) {

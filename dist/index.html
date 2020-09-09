@@ -73,10 +73,18 @@
     GYROTONIC, GYROTONIC & Logo, GYROTONIC EXPANSION SYSTEM, GYROKINESIS, GYROTONER, and The Art of Exercising and Beyond
     are registered trademarks of Gyrotonic Sales Corp.</p>
 
+    <div class="new-content-wrap"></div>
+
     <button onclick="window.gyrotonicTrademarks.apply()">Apply</button>
+    <button onclick="appendNewContent()">Append new content</button>
+    <button onclick="window.gyrotonicTrademarks.apply('.new-content-wrap')">Apply to new content</button>
 
     <script>
       // GT_MANUAL = true;
+      newContent = '<h1>H1 GYROKINESIS</h1><h2>H2 GYROKINESIS</h2><h3>H3 GYROKINESIS</h3><h4>H4 GYROKINESIS</h4><h5>H5 GYROKINESIS</h5><h6>H6 GYROKINESIS</h6><p class="children"><strong>NOTE:</strong> When reselling <span class="times">GYROTONIC®</span> Equipment a Purchase &amp; Use Agreement  must be signed upon sale/transfer of said equipment. The form can be downloaded by clicking <a    href="/wp-content/uploads/2016/08/GYROTONIC®-Equipment-Purchase-and-Use-Agreement-For-Resale.pdf" target="_blank"    rel="noopener noreferrer">GYROTONIC® Equipment Purchase and Use Agreement For Resale</a>.</p><a href="http://GYROTONIC.com">Gyro.com</a><ul>  <li><strong>GYROTONIC® Apprentice</strong></li>  <li><strong>GYROTONIC® Trainer</strong></li>';
+      function appendNewContent() {
+        $('.new-content-wrap').append(newContent)
+      }
     </script>
   </body>
 </html>
