@@ -94,8 +94,6 @@ v1.0.5
             );
           });
 
-          console.log(containerSelectors);
-
           $(containerSelectors.join(",")).each(
             replaceInEl(
               termRre,
