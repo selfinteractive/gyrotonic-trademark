@@ -55,8 +55,8 @@ v1.0.5
           var containerSelectors = [];
           var containerSelectorsNoReg = [];
 
-          var termRre = new RegExp("(?<!<[^>]*)" + term + "®", "g");
-          var termRe = new RegExp("(?<!<[^>]*)" + term, "g");
+          var termRre = new RegExp(term + "®(?![^<]*>|[^<>]*</)", "g");
+          var termRe = new RegExp(term + "(?![^<]*>|[^<>]*</)", "g");
 
           function replaceInEl(re, contains) {
             return function () {
