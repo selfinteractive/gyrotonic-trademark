@@ -27,7 +27,7 @@ v1.0.5
       "GYROKINESIS",
       "GYROTONER",
     ],
-    "gt-corsiva": ["Cobra"],
+    "gt-corsiva": ["Cobra", "The Art of Exercising and Beyond"],
   };
   var regContainers = [
     "strong",
@@ -128,7 +128,7 @@ v1.0.5
     // find jquery
     if (window.$ && window.$() && window.$().jquery) {
       jQuery = window.$;
-    } else if (!jQuery || !jQuery.jquery) {
+    } else if (!jQuery || !jQuery().jquery) {
       // inject it if we couldn't find it
       _injectJquery();
       return setTimeout(_init, 200);

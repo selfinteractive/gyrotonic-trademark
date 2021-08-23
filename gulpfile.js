@@ -2,7 +2,7 @@ const gulp = require("gulp");
 const { parallel, series } = require("gulp");
 
 const uglify = require("gulp-uglify");
-const sass = require("gulp-sass");
+var sass = require('gulp-sass')(require('sass'));
 const concat = require("gulp-concat");
 const browserSync = require("browser-sync").create(); //https://browsersync.io/docs/gulp#page-top
 const autoprefixer = require('gulp-autoprefixer');
