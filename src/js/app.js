@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.0.10
+v1.0.11
 */
 (function (jQuery) {
   var cssRules =
@@ -28,7 +28,7 @@ v1.0.10
       "GYROTONER",
       "ARCHWAY",
     ],
-    "gt-corsiva": ["Ultima", "Cobra", "The Art of Exercising and Beyond"],
+    "gt-corsiva": ["Ultima ", "Cobra", "The Art of Exercising and Beyond"],
   };
   var regContainers = [
     "strong",
