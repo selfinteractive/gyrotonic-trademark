@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.0.11
+v1.0.12
 */
 (function (jQuery) {
   var cssRules =
@@ -11,13 +11,18 @@ v1.0.11
     "text-transform: uppercase;" +
     "}" +
     ".gt-corsiva {" +
-    'font-family: "Monotype Corsiva W01";' +
+    'font-family: "MTCORSVA";' +
     "font-style: normal !important;" +
     "font-weight: bold;" +
     "text-transform: none !important;" +
     "}" +
     ".gt-times .gt-times sup {" +
     "display: none;" +
+    "}" +
+    "@font-face {" +
+    "font-family: 'MTCORSVA';" +
+    "src: url('https://www.gyrotonic.com/wp-content/themes/gyrotonic/fonts/MTCORSVA.eot');" +
+    "src: local('MTCORSVA'), url('https://www.gyrotonic.com/wp-content/themes/gyrotonic/fonts/MTCORSVA.woff') format('woff'), url('https://www.gyrotonic.com/wp-content/themes/gyrotonic/fonts/MTCORSVA.ttf') format('truetype');" +
     "}";
 
   var regTypes = {
