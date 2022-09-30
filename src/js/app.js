@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.0.12
+v1.0.13
 */
 (function (jQuery) {
   var cssRules =
@@ -31,7 +31,7 @@ v1.0.12
       "GYROTONIC",
       "GYROKINESIS",
       "GYROTONER",
-      "ARCHWAY",
+      // "ARCHWAY",
     ],
     "gt-corsiva": ["Ultima ", "Cobra", "The Art of Exercising and Beyond"],
   };
