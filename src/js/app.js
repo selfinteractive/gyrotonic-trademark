@@ -1,8 +1,14 @@
 /*
 @preserve
-v1.0.14
+v1.0.15
 */
 (function (jQuery) {
+  var REG_SYM = '®';
+  var TM_SYM = '™';
+  var ENCODED_SYMS = {
+    '®': '&reg;',
+    '™': '&trade;'
+  };
   var cssRules =
     ".gt-times {" +
     'font-family: "times new roman";' +
@@ -25,15 +31,22 @@ v1.0.14
     "src: local('MTCORSVA'), url('https://www.gyrotonic.com/wp-content/themes/gyrotonic/fonts/MTCORSVA.woff') format('woff'), url('https://www.gyrotonic.com/wp-content/themes/gyrotonic/fonts/MTCORSVA.ttf') format('truetype');" +
     "}";
 
-  var regTypes = {
+  var regFonts = {
     "gt-times": [
       "GYROTONIC EXPANSION SYSTEM",
       "GYROTONIC",
       "GYROKINESIS",
       "GYROTONER",
-      // "ARCHWAY",
+      "ARCHWAY",
     ],
     "gt-corsiva": ["Ultima ", "Cobra", "The Art of Exercising and Beyond"],
+  };
+  var regTypes = {
+    "GYROTONIC EXPANSION SYSTEM": REG_SYM,
+    "GYROTONIC": REG_SYM,
+    "GYROKINESIS": REG_SYM,
+    "GYROTONER": REG_SYM,
+    "ARCHWAY": TM_SYM
   };
   var regContainers = [
     "strong",
@@ -56,12 +69,14 @@ v1.0.14
 
   function replaceTrademarks(selectorPrepend) {
     jQuery(function ($) {
-      $.each(regTypes, function (font, termList) {
+      $.each(regFonts, function (font, termList) {
         $.each(termList, function (i, term) {
           var containerSelectors = [];
           var containerSelectorsNoReg = [];
+          var termSym = regTypes[term];
+          var termSymEncoded = ENCODED_SYMS[termSym];
 
-          var termRre = new RegExp(term + "®(?![^<]*>|[^<>]*</)", "g");
+          var termRre = new RegExp(term + termSym + "(?![^<]*>|[^<>]*</)", "g");
           var termRe = new RegExp(term + "(?![^<]*>|[^<>]*</)", "g");
 
           function replaceInEl(re, contains) {
@@ -75,7 +90,7 @@ v1.0.14
               var text = $(this).html();
               text = text.replace(
                 re,
-                '<span class="' + font + '">' + term + "<sup>®</sup></span>"
+                '<span class="' + font + '">' + term + "<sup>" + termSym + "</sup></span>"
               );
               $(this).html(text);
             };
@@ -88,12 +103,12 @@ v1.0.14
                 container +
                 ":contains(" +
                 term +
-                "®)," +
+                "" + termSym + ")," +
                 prepend +
                 container +
                 ":contains(" +
                 term +
-                "&reg;)"
+                termSymEncoded + ")"
             );
             containerSelectorsNoReg.push(
               prepend + container + ":contains(" + term + ")"
@@ -103,7 +118,7 @@ v1.0.14
           $(containerSelectors.join(",")).each(
             replaceInEl(
               termRre,
-              ":contains(" + term + "®),:contains(" + term + "&reg;)"
+              ":contains(" + term + "" + termSym + "),:contains(" + term + termSymEncoded + ")"
             )
           );
           $(containerSelectorsNoReg.join(","))
