@@ -1,6 +1,6 @@
 {
   "name": "gyrotonic-trademark",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "A JS tool for automatically styling any occurrences of GYROTONIC & GYROKINESIS trademarks on a webpage.",
   "main": "index.js",
   "scripts": {

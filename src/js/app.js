@@ -1,13 +1,13 @@
 /*
 @preserve
-v1.0.15
+v1.0.16
 */
 (function (jQuery) {
-  var REG_SYM = '®';
-  var TM_SYM = '™';
+  var REG_SYM = "®";
+  var TM_SYM = "™";
   var ENCODED_SYMS = {
-    '®': '&reg;',
-    '™': '&trade;'
+    "®": "&reg;",
+    "™": "&trade;",
   };
   var cssRules =
     ".gt-times {" +
@@ -43,10 +43,13 @@ v1.0.15
   };
   var regTypes = {
     "GYROTONIC EXPANSION SYSTEM": REG_SYM,
-    "GYROTONIC": REG_SYM,
-    "GYROKINESIS": REG_SYM,
-    "GYROTONER": REG_SYM,
-    "ARCHWAY": TM_SYM
+    GYROTONIC: REG_SYM,
+    GYROKINESIS: REG_SYM,
+    GYROTONER: REG_SYM,
+    Cobra: REG_SYM,
+    "The Art of Exercising and Beyond": REG_SYM,
+    "Ultima ": REG_SYM,
+    ARCHWAY: TM_SYM,
   };
   var regContainers = [
     "strong",
@@ -90,7 +93,13 @@ v1.0.15
               var text = $(this).html();
               text = text.replace(
                 re,
-                '<span class="' + font + '">' + term + "<sup>" + termSym + "</sup></span>"
+                '<span class="' +
+                  font +
+                  '">' +
+                  term +
+                  "<sup>" +
+                  termSym +
+                  "</sup></span>"
               );
               $(this).html(text);
             };
@@ -103,12 +112,15 @@ v1.0.15
                 container +
                 ":contains(" +
                 term +
-                "" + termSym + ")," +
+                "" +
+                termSym +
+                ")," +
                 prepend +
                 container +
                 ":contains(" +
                 term +
-                termSymEncoded + ")"
+                termSymEncoded +
+                ")"
             );
             containerSelectorsNoReg.push(
               prepend + container + ":contains(" + term + ")"
@@ -118,7 +130,14 @@ v1.0.15
           $(containerSelectors.join(",")).each(
             replaceInEl(
               termRre,
-              ":contains(" + term + "" + termSym + "),:contains(" + term + termSymEncoded + ")"
+              ":contains(" +
+                term +
+                "" +
+                termSym +
+                "),:contains(" +
+                term +
+                termSymEncoded +
+                ")"
             )
           );
           $(containerSelectorsNoReg.join(","))
