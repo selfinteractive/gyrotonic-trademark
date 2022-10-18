@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.0.16
+v1.0.17
 */
 (function (jQuery) {
   var REG_SYM = "®";
@@ -39,7 +39,7 @@ v1.0.16
       "GYROTONER",
       "ARCHWAY",
     ],
-    "gt-corsiva": ["Ultima ", "Cobra", "The Art of Exercising and Beyond"],
+    "gt-corsiva": ["Ultima", "Cobra", "The Art of Exercising and Beyond"],
   };
   var regTypes = {
     "GYROTONIC EXPANSION SYSTEM": REG_SYM,
@@ -48,7 +48,7 @@ v1.0.16
     GYROTONER: REG_SYM,
     Cobra: REG_SYM,
     "The Art of Exercising and Beyond": REG_SYM,
-    "Ultima ": REG_SYM,
+    Ultima: REG_SYM,
     ARCHWAY: TM_SYM,
   };
   var regContainers = [
