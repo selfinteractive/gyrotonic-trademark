@@ -39,7 +39,15 @@ v1.0.17
       "GYROTONER",
       "ARCHWAY",
     ],
-    "gt-corsiva": ["Ultima", "Cobra", "The Art of Exercising and Beyond"],
+    "gt-corsiva": [
+      {
+        term: "Ultima",
+        afterTerm: " XS",
+      },
+      "Ultima",
+      "Cobra",
+      "The Art of Exercising and Beyond",
+    ],
   };
   var regTypes = {
     "GYROTONIC EXPANSION SYSTEM": REG_SYM,
@@ -73,14 +81,30 @@ v1.0.17
   function replaceTrademarks(selectorPrepend) {
     jQuery(function ($) {
       $.each(regFonts, function (font, termList) {
-        $.each(termList, function (i, term) {
+        $.each(termList, function (i, termDef) {
+          var afterTerm = "";
+          var term = "";
+
+          if (typeof termDef === "string") {
+            term = termDef;
+          } else {
+            term = termDef.term;
+            afterTerm = termDef.afterTerm || "";
+          }
+
           var containerSelectors = [];
           var containerSelectorsNoReg = [];
           var termSym = regTypes[term];
           var termSymEncoded = ENCODED_SYMS[termSym];
 
-          var termRre = new RegExp(term + termSym + "(?![^<]*>|[^<>]*</)", "g");
-          var termRe = new RegExp(term + "(?![^<]*>|[^<>]*</)", "g");
+          var termRre = new RegExp(
+            term + termSym + afterTerm + "(?![^<]*>|[^<>]*</)",
+            "g"
+          );
+          var termRe = new RegExp(
+            term + afterTerm + "(?![^<]*>|[^<>]*</)",
+            "g"
+          );
 
           function replaceInEl(re, contains) {
             return function () {
@@ -99,7 +123,9 @@ v1.0.17
                   term +
                   "<sup>" +
                   termSym +
-                  "</sup></span>"
+                  "</sup>" +
+                  afterTerm +
+                  "</span>"
               );
               $(this).html(text);
             };
@@ -114,16 +140,19 @@ v1.0.17
                 term +
                 "" +
                 termSym +
+                afterTerm +
                 ")," +
                 prepend +
                 container +
                 ":contains(" +
                 term +
                 termSymEncoded +
+                afterTerm +
                 ")"
             );
+
             containerSelectorsNoReg.push(
-              prepend + container + ":contains(" + term + ")"
+              prepend + container + ":contains(" + term + afterTerm + ")"
             );
           });
 
@@ -134,15 +163,17 @@ v1.0.17
                 term +
                 "" +
                 termSym +
+                afterTerm +
                 "),:contains(" +
                 term +
                 termSymEncoded +
+                afterTerm +
                 ")"
             )
           );
           $(containerSelectorsNoReg.join(","))
             .not("." + font)
-            .each(replaceInEl(termRe, ":contains(" + term + ")"));
+            .each(replaceInEl(termRe, ":contains(" + term + afterTerm + ")"));
         });
       });
     });
