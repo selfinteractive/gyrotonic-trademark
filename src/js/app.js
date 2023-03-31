@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.0.19
+v1.0.20
 */
 (function (jQuery) {
   var REG_SYM = "®";
@@ -80,6 +80,7 @@ v1.0.19
 
   function replaceTrademarks(selectorPrepend) {
     jQuery(function ($) {
+      // first pass on replacing
       $.each(regFonts, function (font, termList) {
         $.each(termList, function (i, termDef) {
           var afterTerm = "";
@@ -175,6 +176,12 @@ v1.0.19
             .not("." + font)
             .each(replaceInEl(termRe, ":contains(" + term + afterTerm + ")"));
         });
+      });
+
+      // cleanup any nested issues (Ultima XS Ultima)
+      $('span[class^="gt-"] span[class^="gt-"]').each(function (i, nestedEl) {
+        var $nestedEl = $(nestedEl);
+        $nestedEl.find("sup").remove();
       });
     });
   }
