@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.0.18
+v1.0.19
 */
 (function (jQuery) {
   var REG_SYM = "®";
