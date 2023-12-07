@@ -38,6 +38,11 @@ v1.0.20
       "GYROKINESIS",
       "GYROTONER",
       "ARCHWAY",
+      {
+        term: "Ultima",
+        afterTerm: " Reveal",
+        afterTermSymbol: TM_SYM,
+      },
     ],
     "gt-corsiva": [
       {
@@ -85,12 +90,16 @@ v1.0.20
         $.each(termList, function (i, termDef) {
           var afterTerm = "";
           var term = "";
+          var afterTermSymbol = "";
+          var afterTermSymEncoded = "";
 
           if (typeof termDef === "string") {
             term = termDef;
           } else {
             term = termDef.term;
             afterTerm = termDef.afterTerm || "";
+            afterTermSymbol = termDef.afterTermSymbol || "";
+            afterTermSymEncoded = ENCODED_SYMS[afterTermSymbol];
           }
 
           var containerSelectors = [];
@@ -113,12 +122,18 @@ v1.0.20
               // has TMs outside of its children's content
               var $clone = $(this).clone();
               $clone.find("*").remove();
-              if (!$clone.is(contains)) return;
+              console.log($clone);
+              if (
+                $clone.hasClass("gttm-ignore") ||
+                !$clone.is(contains) ||
+                $clone.hasClass("gttm")
+              )
+                return;
 
               var text = $(this).html();
               text = text.replace(
                 re,
-                '<span class="' +
+                '<span class="gttm ' +
                   font +
                   '">' +
                   term +
@@ -126,6 +141,9 @@ v1.0.20
                   termSym +
                   "</sup>" +
                   afterTerm +
+                  (afterTermSymbol
+                    ? "<sup>" + afterTermSymbol + "</sup>"
+                    : "") +
                   "</span>"
               );
               $(this).html(text);
@@ -149,6 +167,9 @@ v1.0.20
                 term +
                 termSymEncoded +
                 afterTerm +
+                (afterTermSymbol
+                  ? "<sup>" + afterTermSymEncoded + "</sup>"
+                  : "") +
                 ")"
             );
 
@@ -169,6 +190,9 @@ v1.0.20
                 term +
                 termSymEncoded +
                 afterTerm +
+                (afterTermSymbol
+                  ? "<sup>" + afterTermSymEncoded + "</sup>"
+                  : "") +
                 ")"
             )
           );
@@ -179,7 +203,7 @@ v1.0.20
       });
 
       // cleanup any nested issues (Ultima XS Ultima)
-      $('span[class^="gt-"] span[class^="gt-"]').each(function (i, nestedEl) {
+      $('span[class*="gttm"] span[class*="gttm"]').each(function (i, nestedEl) {
         var $nestedEl = $(nestedEl);
         $nestedEl.find("sup").remove();
       });

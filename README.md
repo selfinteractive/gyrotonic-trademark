@@ -8,6 +8,8 @@ Also supports calling the code manually:
 
 More info at the [GYROTONIC Trademark Code Homepage](https://www.gyrotonic.com/terms-of-use/trademark-formatting-code/)
 
+Add the class "gttm-ignore" to any container this script should ignore.
+
 ## Running
 
 `npm start` will launch dev mode and open an autorefreshing test page on which the script is run.
