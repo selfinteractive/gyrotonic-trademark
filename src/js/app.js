@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.0.20
+v1.0.22
 */
 (function (jQuery) {
   var REG_SYM = "®";
@@ -206,6 +206,13 @@ v1.0.20
       $('span[class*="gttm"] span[class*="gttm"]').each(function (i, nestedEl) {
         var $nestedEl = $(nestedEl);
         $nestedEl.find("sup").remove();
+      });
+      $('span[class*="gttm"] > span[class*="gttm"]').each(function (
+        i,
+        nestedEl
+      ) {
+        var $nestedEl = $(nestedEl);
+        $nestedEl.contents().unwrap();
       });
     });
   }
