@@ -16,6 +16,11 @@ v1.0.22
     "font-weight: bold;" +
     "text-transform: uppercase;" +
     "}" +
+    ".gt-times-normal {" +
+    'font-family: "times new roman";' +
+    "font-style: normal !important;" +
+    "text-transform: uppercase;" +
+    "}" +
     ".gt-corsiva {" +
     'font-family: "MTCORSVA";' +
     "font-style: normal !important;" +
@@ -38,11 +43,13 @@ v1.0.22
       "GYROKINESIS",
       "GYROTONER",
       "ARCHWAY",
-      {
-        term: "Ultima",
-        afterTerm: " Reveal",
-        afterTermSymbol: TM_SYM,
-      },
+      "Archway",
+    ],
+    "gt-times-normal": [
+      "ULTIMA REVEAL",
+      "Ultima Reveal",
+      "Ultima&reg; Reveal",
+      "Ultima® Reveal",
     ],
     "gt-corsiva": [
       {
@@ -61,8 +68,13 @@ v1.0.22
     GYROTONER: REG_SYM,
     Cobra: REG_SYM,
     "The Art of Exercising and Beyond": REG_SYM,
+    "Ultima Reveal": REG_SYM,
+    "ULTIMA REVEAL": REG_SYM,
+    "Ultima&reg; Reveal": REG_SYM,
+    "Ultima® Reveal": REG_SYM,
     Ultima: REG_SYM,
     ARCHWAY: TM_SYM,
+    Archway: TM_SYM,
   };
   var regContainers = [
     "strong",
@@ -122,7 +134,7 @@ v1.0.22
               // has TMs outside of its children's content
               var $clone = $(this).clone();
               $clone.find("*").remove();
-              console.log($clone);
+              // console.log($clone);
               if (
                 $clone.hasClass("gttm-ignore") ||
                 !$clone.is(contains) ||
@@ -131,6 +143,7 @@ v1.0.22
                 return;
 
               var text = $(this).html();
+
               text = text.replace(
                 re,
                 '<span class="gttm ' +
@@ -146,6 +159,19 @@ v1.0.22
                     : "") +
                   "</span>"
               );
+
+              // remove any symbols not wrapped in a span
+              const toRemove = Object.keys(ENCODED_SYMS).concat(
+                Object.values(regTypes)
+              );
+
+              toRemove.forEach((sym) => {
+                text = text.replace(
+                  new RegExp(`(?!<sup>)${sym}(?!<\/sup>)`, "g"),
+                  ""
+                );
+              });
+
               $(this).html(text);
             };
           }
