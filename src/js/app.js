@@ -19,6 +19,7 @@ v1.0.22
     ".gt-times-normal {" +
     'font-family: "times new roman";' +
     "font-style: normal !important;" +
+    "font-weight: lighter !important;" +
     "text-transform: uppercase;" +
     "}" +
     ".gt-corsiva {" +
