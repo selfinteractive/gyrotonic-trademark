@@ -74,8 +74,9 @@ v1.0.22
     "Ultima&reg; Reveal": REG_SYM,
     "Ultima® Reveal": REG_SYM,
     Ultima: REG_SYM,
-    ARCHWAY: TM_SYM,
-    Archway: TM_SYM,
+    ARCHWAY: REG_SYM,
+    Archway: REG_SYM,
+    // Archway: TM_SYM,
   };
   var regContainers = [
     "strong",
