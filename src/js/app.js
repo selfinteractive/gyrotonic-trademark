@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.0.22
+v1.1.0
 */
 (function (jQuery) {
   var REG_SYM = "®";
@@ -23,18 +23,13 @@ v1.0.22
     "text-transform: uppercase;" +
     "}" +
     ".gt-corsiva {" +
-    'font-family: "MTCORSVA";' +
-    "font-style: normal !important;" +
+    'font-family: "times new roman";' +
+    "font-style: italic !important;" +
     "font-weight: bold;" +
     "text-transform: none !important;" +
     "}" +
     ".gt-times .gt-times sup {" +
     "display: none;" +
-    "}" +
-    "@font-face {" +
-    "font-family: 'MTCORSVA';" +
-    "src: url('https://www.gyrotonic.com/wp-content/themes/gyrotonic/fonts/MTCORSVA.eot');" +
-    "src: local('MTCORSVA'), url('https://www.gyrotonic.com/wp-content/themes/gyrotonic/fonts/MTCORSVA.woff') format('woff'), url('https://www.gyrotonic.com/wp-content/themes/gyrotonic/fonts/MTCORSVA.ttf') format('truetype');" +
     "}";
 
   var regFonts = {
@@ -258,7 +253,7 @@ v1.0.22
       }
       injected = true;
     }
-    l("//code.jquery.com/jquery-3.2.1.min.js", "jquery");
+    l("https://code.jquery.com/jquery-3.2.1.min.js", "jquery");
   }
 
   function _init() {
