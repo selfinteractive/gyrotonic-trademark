@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.1.0
+v1.1.2
 */
 (function (jQuery) {
   var REG_SYM = "®";
@@ -25,7 +25,7 @@ v1.1.0
     ".gt-corsiva {" +
     'font-family: "times new roman";' +
     "font-style: italic !important;" +
-    "font-weight: bold;" +
+    "font-weight: normal;" +
     "text-transform: none !important;" +
     "}" +
     ".gt-times .gt-times sup {" +
