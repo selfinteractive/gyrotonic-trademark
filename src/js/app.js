@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.1.2
+v1.1.4
 */
 (function (jQuery) {
   var REG_SYM = "®";
@@ -36,6 +36,7 @@ v1.1.2
     "gt-times": [
       "GYROTONIC EXPANSION SYSTEM",
       "GYROTONIC",
+      "자이로토닉 레이크파크 스튜디오",
       "GYROKINESIS",
       "GYROTONER",
       "ARCHWAY",
@@ -63,6 +64,7 @@ v1.1.2
     GYROKINESIS: REG_SYM,
     GYROTONER: REG_SYM,
     Cobra: REG_SYM,
+    "자이로토닉 레이크파크 스튜디오": REG_SYM,
     "The Art of Exercising and Beyond": REG_SYM,
     "Ultima Reveal": REG_SYM,
     "ULTIMA REVEAL": REG_SYM,
