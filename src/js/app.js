@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.1.5
+v1.1.6
 */
 (function (jQuery) {
   var REG_SYM = "®";
@@ -91,7 +91,7 @@ v1.1.5
   var regBreakout = ["strong"];
 
   function appendCss() {
-    $("body").append("<style>" + cssRules + "</style>");
+    jQuery("body").append("<style>" + cssRules + "</style>");
   }
 
   function replaceTrademarks(selectorPrepend) {
