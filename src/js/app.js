@@ -1,6 +1,6 @@
 /*
 @preserve
-v1.1.6
+v1.1.7
 */
 (function (jQuery) {
   var REG_SYM = "®";
@@ -80,6 +80,9 @@ v1.1.6
     "span",
     "p",
     "a",
+    "b",
+    "i",
+    "em",
     "h1",
     "h2",
     "h3",
