@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../../src/php/GyrotonicTrademark.php';
 
+use SelfInteractive\GyrotonicTrademark\GyrotonicTrademark;
+
 $testCases = [
     // Headings
     ['label' => 'H1 GYROTONIC',                     'input' => '<h1>H1 GYROTONIC</h1>'],

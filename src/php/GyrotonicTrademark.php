@@ -1,8 +1,10 @@
 <?php
 
+namespace SelfInteractive\GyrotonicTrademark;
+
 class GyrotonicTrademark
 {
-    private const VERSION = '2.0.0';
+    private const VERSION = '2.1.0';
 
     private const REG_SYM = "\u{00AE}";
 

@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../../src/php/GyrotonicTrademark.php';
 
+use SelfInteractive\GyrotonicTrademark\GyrotonicTrademark;
+
 class GyrotonicTrademarkTest
 {
     private int $passed = 0;

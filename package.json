@@ -1,6 +1,6 @@
 {
   "name": "gyrotonic-trademark",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A JS & PHP tool for automatically styling any occurrences of GYROTONIC & GYROKINESIS trademarks on a webpage.",
   "main": "index.js",
   "scripts": {

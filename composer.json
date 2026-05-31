@@ -4,7 +4,9 @@
     "type": "library",
     "license": "proprietary",
     "autoload": {
-        "classmap": ["src/php/"]
+        "psr-4": {
+            "SelfInteractive\\GyrotonicTrademark\\": "src/php/"
+        }
     },
     "require": {
         "php": ">=8.1"
