@@ -30,6 +30,12 @@ v1.1.8
     "}" +
     ".gt-times .gt-times sup {" +
     "display: none;" +
+    "}" +
+    ".gt-times-logo {" +
+    'font-family: "times new roman";' +
+    "font-style: normal !important;" +
+    "font-weight: bold;" +
+    "text-transform: capitalize;" +
     "}";
 
   var regFonts = {
@@ -110,19 +116,22 @@ v1.1.8
     var node = startEl;
     var pendingDescend = null;
 
-    function isInlineWrapper(tag) {
-      return inlineWrapperTags.indexOf(tag) !== -1;
+    // An already-wrapped trademark/logo span (class "gttm") is a stop, not
+    // a transparent wrapper - otherwise a second apply() call would walk
+    // back into content it already produced and re-match it.
+    function isTransparentWrapper(el) {
+      return (
+        el.nodeType === 1 &&
+        inlineWrapperTags.indexOf(el.tagName.toLowerCase()) !== -1 &&
+        !/(^|\s)gttm(\s|$)/.test(el.className || "")
+      );
     }
 
     function siblingOrClimb(n) {
       while (n) {
         if (n.nextSibling) return n.nextSibling;
         var parent = n.parentNode;
-        if (
-          !parent ||
-          parent.nodeType !== 1 ||
-          !isInlineWrapper(parent.tagName.toLowerCase())
-        ) {
+        if (!parent || !isTransparentWrapper(parent)) {
           return null;
         }
         n = parent;
@@ -145,8 +154,7 @@ v1.1.8
           return node;
         }
         if (node.nodeType === 1) {
-          var tag = node.tagName.toLowerCase();
-          if (tag === "br" || !isInlineWrapper(tag)) {
+          if (node.tagName.toLowerCase() === "br" || !isTransparentWrapper(node)) {
             return null;
           }
           if (node.firstChild) {
@@ -318,7 +326,88 @@ v1.1.8
           nextText.nodeValue = nextText.nodeValue.slice(1);
         }
       });
+
+      // "& Logo" directly after a GYROTONIC® span, in Times New Roman
+      // bold. Runs after the stray-® strip above, so a doubled ® between
+      // the two never confuses the match.
+      $(prepend + ".gttm").each(function () {
+        if (!isGyrotonicSpan(this)) return;
+
+        var pieces = matchLogoAttribution(lineTextWalker(this));
+        if (!pieces) return;
+
+        pieces.forEach(function (piece) {
+          var node = piece.node;
+          var matchNode = piece.start > 0 ? node.splitText(piece.start) : node;
+          if (piece.end - piece.start < matchNode.nodeValue.length) {
+            matchNode.splitText(piece.end - piece.start);
+          }
+          var span = matchNode.ownerDocument.createElement("span");
+          span.className = "gttm gt-times-logo";
+          span.textContent = matchNode.nodeValue;
+          matchNode.parentNode.replaceChild(span, matchNode);
+        });
+      });
     });
+  }
+
+  // True for a .gttm span whose term is exactly "GYROTONIC" - not
+  // GYROKINESIS, GYROTONIC EXPANSION SYSTEM, or any other regFonts entry.
+  function isGyrotonicSpan(el) {
+    var first = el.firstChild;
+    return !!(first && first.nodeType === 3 && first.nodeValue === "GYROTONIC");
+  }
+
+  // Walks `next` (a lineTextWalker cursor) looking for "& Logo" (raw or
+  // &amp;-encoded - both decode to the same "&" character in the DOM)
+  // immediately after optional whitespace, with "logo" matched
+  // case-insensitively. Returns an array of {node, start, end} pieces - one
+  // per text node the match touches, since a match split across separate
+  // inline elements (footer block 4b99738a) can't be wrapped in one span -
+  // or null if no match is found before the walk stops.
+  function matchLogoAttribution(next) {
+    var pieces = [];
+    var sawAmp = false;
+    var node;
+
+    while ((node = next())) {
+      var text = node.nodeValue;
+      var i = 0;
+
+      if (!sawAmp) {
+        while (i < text.length && /\s/.test(text[i])) i++;
+        if (i >= text.length) continue;
+        if (text[i] !== "&") return null;
+
+        var ampStart = i;
+        i++;
+        sawAmp = true;
+        pieces.push({ node: node, start: ampStart, end: null });
+
+        while (i < text.length && /\s/.test(text[i])) i++;
+        if (i >= text.length) {
+          pieces[pieces.length - 1].end = text.length;
+          continue;
+        }
+
+        var logoMatch = /^logo\b/i.exec(text.slice(i));
+        if (!logoMatch) return null;
+        pieces[pieces.length - 1].end = i + logoMatch[0].length;
+        return pieces;
+      }
+
+      while (i < text.length && /\s/.test(text[i])) i++;
+      var rest = text.slice(i);
+      var m = /^logo\b/i.exec(rest);
+      if (m) {
+        pieces.push({ node: node, start: i, end: i + m[0].length });
+        return pieces;
+      }
+      if (i >= text.length) continue;
+      return null;
+    }
+
+    return null;
   }
 
   var injected = false;

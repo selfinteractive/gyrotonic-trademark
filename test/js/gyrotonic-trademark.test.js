@@ -137,3 +137,78 @@ test("apply() is idempotent on the stray-® heading fixture", async () => {
   const twice = await fixture.apply();
   assert.equal(twice, once);
 });
+
+test('"& Logo" in the same text node as GYROTONIC® is wrapped in gt-times-logo', async () => {
+  const result = await format("<p><em>GYROTONIC® &amp; Logo</em>, x</p>");
+  assert.equal(
+    result,
+    '<p><em><span class="gttm gt-times">GYROTONIC<sup>®</sup></span> <span class="gttm gt-times-logo">&amp; Logo</span></em>, x</p>'
+  );
+});
+
+test('"& Logo" after a stray ® stripped from a bolded/italicised GYROTONIC is wrapped', async () => {
+  const result = await format("<p><em>GYROTONIC</em>® &amp; Logo, x</p>");
+  assert.equal((result.match(/®/g) || []).length, 1);
+  assert.match(
+    result,
+    /<span class="gttm gt-times-logo">&amp; Logo<\/span>/
+  );
+});
+
+test('footer block 4b99738a: split "& Logo" gets one gt-times-logo span per text piece', async () => {
+  const html =
+    '<span class="sqsrte-text-color--darkAccent"><em>GYROTONIC</em>® <strong><em>&amp; </em>Logo, </strong><em>GYROTONIC</em>® and <em>GYROKINESIS</em>®<br>are registered trademarks of Gyrotonic Sales Corp and are used with their permission.</span>';
+  const result = await format(html);
+  assert.equal((result.match(/®/g) || []).length, 3);
+  assert.match(
+    result,
+    /<strong><em><span class="gttm gt-times-logo">&amp; <\/span><\/em><span class="gttm gt-times-logo">Logo<\/span>, <\/strong>/
+  );
+});
+
+test("footer block 58fbaa4e: the &lt;logo typo is left alone, no doubled ®", async () => {
+  const html =
+    '<span class="sqsrte-text-color--darkAccent"><strong><em>GYROTONIC® &amp; &lt;logo</em>, </strong><em>GYROTONIC</em>® and <em>GYROKINESIS</em>®<br>are registered trademarks of Gyrotonic Sales Corp and are used with their permission.</span>';
+  const result = await format(html);
+  assert.equal((result.match(/®/g) || []).length, 3);
+  assert.doesNotMatch(result, /gt-times-logo/);
+});
+
+test("GYROTONIC &amp; logo (lowercase) is still wrapped - capitalize handles display", async () => {
+  const result = await format("<p>GYROTONIC &amp; logo</p>");
+  assert.match(result, /<span class="gttm gt-times-logo">&amp; logo<\/span>/);
+});
+
+test("& Logo is NOT wrapped after GYROKINESIS, GYROTONIC EXPANSION SYSTEM, plain text, or across a <br>", async () => {
+  const cases = [
+    "<p>GYROKINESIS &amp; Logo</p>",
+    "<p>GYROTONIC EXPANSION SYSTEM &amp; Logo</p>",
+    "<p>Brand &amp; Logo</p>",
+    "<p>GYROTONIC<br>&amp; Logo</p>",
+  ];
+  for (const html of cases) {
+    const result = await format(html);
+    assert.doesNotMatch(result, /gt-times-logo/, html);
+  }
+});
+
+test("& Logo is not wrapped inside gttm-ignore, or outside a selectorPrepend scope", async () => {
+  const ignored = await format('<p class="gttm-ignore">GYROTONIC® &amp; Logo</p>');
+  assert.doesNotMatch(ignored, /gt-times-logo/);
+
+  const fixture = await buildFixture(
+    '<div class="scope"><p>GYROTONIC &amp; Logo</p></div><p>GYROTONIC &amp; Logo</p>'
+  );
+  const scoped = await fixture.apply(".scope");
+  const scopedMatches = scoped.match(/gt-times-logo/g) || [];
+  assert.equal(scopedMatches.length, 1);
+});
+
+test("apply() is idempotent on footer block 4b99738a", async () => {
+  const html =
+    '<span class="sqsrte-text-color--darkAccent"><em>GYROTONIC</em>® <strong><em>&amp; </em>Logo, </strong><em>GYROTONIC</em>® and <em>GYROKINESIS</em>®<br>are registered trademarks of Gyrotonic Sales Corp and are used with their permission.</span>';
+  const fixture = await buildFixture(html);
+  const once = await fixture.apply();
+  const twice = await fixture.apply();
+  assert.equal(twice, once);
+});
