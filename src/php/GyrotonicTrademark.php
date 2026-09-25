@@ -17,6 +17,7 @@ class GyrotonicTrademark
         'gt-times'        => "font-family:'Times New Roman',Times,serif;font-weight:bold;text-transform:uppercase;font-style:normal;",
         'gt-times-normal' => "font-family:'Times New Roman',Times,serif;font-weight:normal;text-transform:uppercase;font-style:normal;",
         'gt-corsiva'      => "font-family:'Times New Roman',Times,serif;font-style:italic;font-weight:normal;text-transform:none;",
+        'gt-times-logo'   => "font-family:'Times New Roman',Times,serif;font-weight:bold;text-transform:capitalize;font-style:normal;",
     ];
 
     private const SUP_STYLE = 'font-size:0.6em;vertical-align:super;line-height:0;';
@@ -78,6 +79,7 @@ class GyrotonicTrademark
         }
 
         $html = self::removeOrphanedSymbols($html);
+        $html = self::wrapLogoAttribution($html);
         $html = self::cleanupNestedSpans($html);
         $html = self::stripDataAttributes($html);
         $html = self::restoreIgnoredSections($html, $ignorePlaceholders);
@@ -236,6 +238,21 @@ class GyrotonicTrademark
         }
 
         return $html;
+    }
+
+    private static function wrapLogoAttribution(string $html): string
+    {
+        // Only "GYROTONIC" (never GYROKINESIS or a compound term) followed
+        // directly by "& Logo" triggers this - see Decisions in gmail-1508.
+        $pattern = '/(<span[^>]*data-gttm="1"[^>]*>GYROTONIC<sup[^>]*>' . self::REG_SYM . '<\/sup><\/span>)'
+            . '((?:\s|<\/(?:em|strong|b|i|a|span)>)*)'
+            . '(&amp;|&)(\s*)(logo\b)/ui';
+
+        return preg_replace_callback($pattern, function (array $m): string {
+            $span = '<span style="' . self::INLINE_STYLES['gt-times-logo'] . '" data-gttm="1">'
+                . $m[3] . $m[4] . $m[5] . '</span>';
+            return $m[1] . $m[2] . $span;
+        }, $html);
     }
 
     private static function cleanupNestedSpans(string $html): string

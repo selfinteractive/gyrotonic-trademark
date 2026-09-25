@@ -12,6 +12,7 @@ class GyrotonicTrademarkTest
     private const TIMES = "font-family:'Times New Roman',Times,serif;font-weight:bold;text-transform:uppercase;font-style:normal;";
     private const TIMES_NORMAL = "font-family:'Times New Roman',Times,serif;font-weight:normal;text-transform:uppercase;font-style:normal;";
     private const CORSIVA = "font-family:'Times New Roman',Times,serif;font-style:italic;font-weight:normal;text-transform:none;";
+    private const LOGO = "font-family:'Times New Roman',Times,serif;font-weight:bold;text-transform:capitalize;font-style:normal;";
     private const SUP = "font-size:0.6em;vertical-align:super;line-height:0;";
 
     public function run(): void
@@ -27,6 +28,8 @@ class GyrotonicTrademarkTest
         $this->testOtherTerms();
         $this->testHtmlContext();
         $this->testEdgeCases();
+        $this->testLiveSquarespaceMarkup();
+        $this->testLogoAttribution();
 
         echo "\n---------------------------------\n";
         $total = $this->passed + $this->failed;
@@ -189,6 +192,68 @@ class GyrotonicTrademarkTest
         $this->assertContains('>The Art of Exercising and Beyond<sup', $result, 'Complex - Art of Exercising');
 
         echo "\n";
+    }
+
+    private function testLiveSquarespaceMarkup(): void
+    {
+        echo "Live Squarespace Markup (gmail-1508):\n";
+
+        // Footer block 58fbaa4e - has the site's own "&lt;logo" typo.
+        $footer1 = '<span class="sqsrte-text-color--darkAccent"><strong><em>GYROTONIC® &amp; &lt;logo</em>, </strong><em>GYROTONIC</em>® and <em>GYROKINESIS</em>®<br>are registered trademarks of Gyrotonic Sales Corp and are used with their permission.</span>';
+        // Footer block 4b99738a.
+        $footer2 = '<span class="sqsrte-text-color--darkAccent"><em>GYROTONIC</em>® <strong><em>&amp; </em>Logo, </strong><em>GYROTONIC</em>® and <em>GYROKINESIS</em>®<br>are registered trademarks of Gyrotonic Sales Corp and are used with their permission.</span>';
+        $heading = '<span class="sqsrte-text-color--accent"><em>GYROKINESIS</em>®</span>';
+
+        $this->assertNoOrphanedSymbol(GyrotonicTrademark::apply($footer1), 'Footer 58fbaa4e - no ® outside <sup>');
+        $this->assertNoOrphanedSymbol(GyrotonicTrademark::apply($footer2), 'Footer 4b99738a - no ® outside <sup>');
+        $this->assertNoOrphanedSymbol(GyrotonicTrademark::apply($heading), 'Heading - no ® outside <sup>');
+
+        echo "\n";
+    }
+
+    private function testLogoAttribution(): void
+    {
+        echo "GYROTONIC & Logo Attribution:\n";
+
+        $result = GyrotonicTrademark::apply('GYROTONIC® &amp; Logo');
+        $this->assertContains('<span style="' . self::LOGO . '">&amp; Logo</span>', $result, 'Encoded &amp; Logo wrapped in gt-times-logo');
+        $this->assertNoOrphanedSymbol($result, 'Encoded &amp; Logo - one ®');
+
+        $result = GyrotonicTrademark::apply('GYROTONIC® & Logo');
+        $this->assertContains('<span style="' . self::LOGO . '">& Logo</span>', $result, 'Raw & Logo wrapped in gt-times-logo, raw & preserved');
+        $this->assertNoOrphanedSymbol($result, 'Raw & Logo - one ®');
+
+        $result = GyrotonicTrademark::apply('<em>GYROTONIC</em>® &amp; Logo');
+        $this->assertContains('<span style="' . self::LOGO . '">&amp; Logo</span>', $result, '<em>GYROTONIC</em>® & Logo wrapped');
+        $this->assertNoOrphanedSymbol($result, '<em>GYROTONIC</em>® & Logo - one ®');
+
+        $result = GyrotonicTrademark::apply('GYROKINESIS & Logo');
+        $this->assertNotContains(self::LOGO, $result, 'GYROKINESIS & Logo NOT wrapped');
+
+        $result = GyrotonicTrademark::apply('Brand & Logo');
+        $this->assertNotContains(self::LOGO, $result, 'Brand & Logo NOT wrapped');
+
+        $footer1 = '<span class="sqsrte-text-color--darkAccent"><strong><em>GYROTONIC® &amp; &lt;logo</em>, </strong><em>GYROTONIC</em>® and <em>GYROKINESIS</em>®<br>are registered trademarks of Gyrotonic Sales Corp and are used with their permission.</span>';
+        $result = GyrotonicTrademark::apply($footer1);
+        $this->assertNotContains(self::LOGO, $result, 'Footer 58fbaa4e (&lt;logo typo) NOT wrapped');
+
+        // The split form (footer block 4b99738a): "&amp; " is inside its own
+        // <em>, "Logo" inside a sibling <strong> - a string-regex match across
+        // that boundary would be fragile, so PHP documents this as a known limit.
+        $footer2 = '<span class="sqsrte-text-color--darkAccent"><em>GYROTONIC</em>® <strong><em>&amp; </em>Logo, </strong><em>GYROTONIC</em>® and <em>GYROKINESIS</em>®<br>are registered trademarks of Gyrotonic Sales Corp and are used with their permission.</span>';
+        $result = GyrotonicTrademark::apply($footer2);
+        $this->assertNotContains(self::LOGO, $result, 'Split form (footer 4b99738a) NOT wrapped - PHP handles only unsplit forms');
+
+        $result = GyrotonicTrademark::apply('<p class="gttm-ignore">GYROTONIC® &amp; Logo</p>');
+        $this->assertNotContains(self::LOGO, $result, 'gttm-ignore section NOT wrapped');
+
+        echo "\n";
+    }
+
+    private function assertNoOrphanedSymbol(string $haystack, string $testName): void
+    {
+        $stripped = preg_replace('/<sup[^>]*>®<\/sup>/u', '', $haystack);
+        $this->assertNotContains('®', $stripped, $testName);
     }
 
     private function assertEqual(string $expected, string $actual, string $testName): void
