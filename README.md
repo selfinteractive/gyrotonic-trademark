@@ -10,9 +10,34 @@ More info at the [GYROTONIC Trademark Code Homepage](https://www.gyrotonic.com/t
 
 Add the class "gttm-ignore" to any container this script should ignore.
 
+## GYROTONIC® & Logo
+
+"& Logo" directly after a GYROTONIC® mention (as in "GYROTONIC® & Logo, GYROTONIC® and
+GYROKINESIS® are registered trademarks...") is formatted in Times New Roman bold, matching
+the GYROTONIC® wording next to it. It is matched case-insensitively on "logo" and displayed
+capitalized, so "& logo" as typed still renders as "& Logo". Only GYROTONIC triggers it -
+GYROKINESIS, "GYROTONIC EXPANSION SYSTEM", and unrelated text like "Brand & Logo" are left
+alone.
+
+The JS version also formats a split form, where "&" and "Logo" sit in separate inline
+elements (e.g. a trainer bolded only "Logo") - each piece gets wrapped in its own span. The
+PHP version (used for the theme's emails, which never go through a rich-text editor) handles
+only the unsplit form.
+
+A typo like "& <logo" (a stray "<" where "Logo" should be) is content, not something this
+script repairs - it is left as-is.
+
 ## Running
 
 `npm start` will launch dev mode and open an autorefreshing test page on which the script is run.
+
+## Testing
+
+`npm install` once (no `node_modules` is committed), then:
+
+- `npm test` runs both suites (JS, then PHP).
+- `npm run test:js` runs the JS suite alone (`node:test` + jsdom, against `src/js/app.js`).
+- `npm run test:php` runs the PHP suite alone (`test/php/GyrotonicTrademarkTest.php`).
 
 ## Deploying
 
