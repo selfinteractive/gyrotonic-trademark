@@ -92,9 +92,71 @@ v1.1.8
     "li",
   ];
   var regBreakout = ["strong"];
+  var inlineWrapperTags = ["em", "strong", "b", "i", "a", "span"];
 
   function appendCss() {
     jQuery("body").append("<style>" + cssRules + "</style>");
+  }
+
+  // Returns a function that, called repeatedly, walks forward in document
+  // order from startEl and returns each text node making up "the rest of
+  // the line": it passes transparently through inline wrapper elements
+  // (em, strong, b, i, a, span) - both climbing out of one as an ancestor
+  // and descending into one as a sibling - and stops (returning null) at a
+  // <br>, any other element, or the end of the document. Shared by the
+  // stray-®/™ strip and the "& Logo" match, both of which need "the text
+  // that follows a .gttm span within the same line."
+  function lineTextWalker(startEl) {
+    var node = startEl;
+    var pendingDescend = null;
+
+    function isInlineWrapper(tag) {
+      return inlineWrapperTags.indexOf(tag) !== -1;
+    }
+
+    function siblingOrClimb(n) {
+      while (n) {
+        if (n.nextSibling) return n.nextSibling;
+        var parent = n.parentNode;
+        if (
+          !parent ||
+          parent.nodeType !== 1 ||
+          !isInlineWrapper(parent.tagName.toLowerCase())
+        ) {
+          return null;
+        }
+        n = parent;
+      }
+      return null;
+    }
+
+    return function next() {
+      while (true) {
+        if (pendingDescend) {
+          node = pendingDescend;
+          pendingDescend = null;
+        } else {
+          var found = siblingOrClimb(node);
+          if (!found) return null;
+          node = found;
+        }
+
+        if (node.nodeType === 3) {
+          return node;
+        }
+        if (node.nodeType === 1) {
+          var tag = node.tagName.toLowerCase();
+          if (tag === "br" || !isInlineWrapper(tag)) {
+            return null;
+          }
+          if (node.firstChild) {
+            pendingDescend = node.firstChild;
+          }
+        }
+        // else: comment or other node type, or an empty inline wrapper -
+        // loop again and advance past it.
+      }
+    };
   }
 
   function replaceTrademarks(selectorPrepend) {
@@ -241,6 +303,20 @@ v1.1.8
       ) {
         var $nestedEl = $(nestedEl);
         $nestedEl.contents().unwrap();
+      });
+
+      // A ® or ™ that the editor typed outside the italicised/bolded word
+      // (e.g. <em>GYROTONIC</em>®) sits in the parent's text, which the
+      // first pass never touches, so the reader sees it doubled. Strip
+      // only when it is the very first character right after a .gttm
+      // span - whitespace or anything else in front of it means it is not
+      // a doubled symbol and is left alone.
+      var prepend = selectorPrepend ? selectorPrepend + " " : "";
+      $(prepend + ".gttm").each(function () {
+        var nextText = lineTextWalker(this)();
+        if (nextText && /^[®™]/.test(nextText.nodeValue)) {
+          nextText.nodeValue = nextText.nodeValue.slice(1);
+        }
       });
     });
   }

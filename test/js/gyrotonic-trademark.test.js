@@ -99,3 +99,41 @@ test("gttm-ignore section is left untouched", async () => {
   const result = await format('<p class="gttm-ignore">GYROTONIC</p>');
   assert.equal(result, '<p class="gttm-ignore">GYROTONIC</p>');
 });
+
+test("stray ® directly after a .gttm span (editor italicised only the word) is stripped", async () => {
+  const result = await format(
+    '<h2><span class="sqsrte-text-color--accent"><em>GYROKINESIS</em>®</span></h2>'
+  );
+  assert.equal(
+    result,
+    '<h2><span class="sqsrte-text-color--accent"><em><span class="gttm gt-times">GYROKINESIS<sup>®</sup></span></em></span></h2>'
+  );
+  assert.equal((result.match(/®/g) || []).length, 1);
+});
+
+test("stray ® after two closing inline wrappers is stripped", async () => {
+  const result = await format(
+    "<p><strong><em>GYROTONIC</em></strong>&reg; method</p>"
+  );
+  assert.equal(
+    result,
+    '<p><strong><em><span class="gttm gt-times">GYROTONIC<sup>®</sup></span></em></strong> method</p>'
+  );
+});
+
+test("® preceded by whitespace is left alone (not a stray doubled ®)", async () => {
+  const result = await format("<p><em>GYROTONIC</em> ® x</p>");
+  assert.equal(
+    result,
+    '<p><em><span class="gttm gt-times">GYROTONIC<sup>®</sup></span></em> ® x</p>'
+  );
+});
+
+test("apply() is idempotent on the stray-® heading fixture", async () => {
+  const fixture = await buildFixture(
+    '<h2><span class="sqsrte-text-color--accent"><em>GYROKINESIS</em>®</span></h2>'
+  );
+  const once = await fixture.apply();
+  const twice = await fixture.apply();
+  assert.equal(twice, once);
+});
