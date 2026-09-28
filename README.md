@@ -14,8 +14,11 @@ Add the class "gttm-ignore" to any container this script should ignore.
 
 "& Logo" directly after a GYROTONIC® mention (as in "GYROTONIC® & Logo, GYROTONIC® and
 GYROKINESIS® are registered trademarks...") is formatted in Times New Roman bold, matching
-the GYROTONIC® wording next to it. It is matched case-insensitively on "logo" and displayed
-capitalized, so "& logo" as typed still renders as "& Logo". Only GYROTONIC triggers it -
+the GYROTONIC® wording next to it. It is matched case-insensitively on "logo" and always
+displayed in title case, so "& logo", "& LOGO" and "& Logo" as typed all render as "& Logo" -
+even inside a theme style that uppercases the surrounding text. The typed text is never
+rewritten: the first letter sits in a `text-transform: capitalize` span and the remaining three
+in a nested `text-transform: lowercase` span. Only GYROTONIC triggers it -
 GYROKINESIS, "GYROTONIC EXPANSION SYSTEM", and unrelated text like "Brand & Logo" are left
 alone.
 

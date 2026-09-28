@@ -142,7 +142,7 @@ test('"& Logo" in the same text node as GYROTONIC® is wrapped in gt-times-logo'
   const result = await format("<p><em>GYROTONIC® &amp; Logo</em>, x</p>");
   assert.equal(
     result,
-    '<p><em><span class="gttm gt-times">GYROTONIC<sup>®</sup></span> <span class="gttm gt-times-logo">&amp; Logo</span></em>, x</p>'
+    '<p><em><span class="gttm gt-times">GYROTONIC<sup>®</sup></span> <span class="gttm gt-times-logo">&amp; L<span class="gt-lowercase">ogo</span></span></em>, x</p>'
   );
 });
 
@@ -151,7 +151,7 @@ test('"& Logo" after a stray ® stripped from a bolded/italicised GYROTONIC is w
   assert.equal((result.match(/®/g) || []).length, 1);
   assert.match(
     result,
-    /<span class="gttm gt-times-logo">&amp; Logo<\/span>/
+    /<span class="gttm gt-times-logo">&amp; L<span class="gt-lowercase">ogo<\/span><\/span>/
   );
 });
 
@@ -162,7 +162,7 @@ test('footer block 4b99738a: split "& Logo" gets one gt-times-logo span per text
   assert.equal((result.match(/®/g) || []).length, 3);
   assert.match(
     result,
-    /<strong><em><span class="gttm gt-times-logo">&amp; <\/span><\/em><span class="gttm gt-times-logo">Logo<\/span>, <\/strong>/
+    /<strong><em><span class="gttm gt-times-logo">&amp; <\/span><\/em><span class="gttm gt-times-logo">L<span class="gt-lowercase">ogo<\/span><\/span>, <\/strong>/
   );
 });
 
@@ -176,7 +176,28 @@ test("footer block 58fbaa4e: the &lt;logo typo is left alone, no doubled ®", as
 
 test("GYROTONIC &amp; logo (lowercase) is still wrapped - capitalize handles display", async () => {
   const result = await format("<p>GYROTONIC &amp; logo</p>");
-  assert.match(result, /<span class="gttm gt-times-logo">&amp; logo<\/span>/);
+  assert.match(
+    result,
+    /<span class="gttm gt-times-logo">&amp; l<span class="gt-lowercase">ogo<\/span><\/span>/
+  );
+});
+
+test("GYROTONIC &amp; LOGO (all caps) is wrapped with the trailing letters in gt-lowercase", async () => {
+  const result = await format("<p>GYROTONIC &amp; LOGO</p>");
+  assert.match(
+    result,
+    /<span class="gttm gt-times-logo">&amp; L<span class="gt-lowercase">OGO<\/span><\/span>/
+  );
+});
+
+test("injected CSS renders any casing of \"logo\" as \"Logo\": capitalize outside, lowercase inside", async () => {
+  const fixture = await buildFixture("<h2><em>GYROTONIC &amp; LOGO</em></h2>");
+  await fixture.apply();
+  const { document, getComputedStyle } = fixture.window;
+  const outer = document.querySelector(".gt-times-logo");
+  const inner = outer.querySelector(".gt-lowercase");
+  assert.equal(getComputedStyle(outer).textTransform, "capitalize");
+  assert.equal(getComputedStyle(inner).textTransform, "lowercase");
 });
 
 test("& Logo is NOT wrapped after GYROKINESIS, GYROTONIC EXPANSION SYSTEM, plain text, or across a <br>", async () => {

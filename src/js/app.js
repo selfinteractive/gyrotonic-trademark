@@ -1,6 +1,6 @@
 /*
 @preserve
-v2.2.0
+v2.2.1
 */
 (function (jQuery) {
   var REG_SYM = "®";
@@ -35,7 +35,10 @@ v2.2.0
     'font-family: "times new roman";' +
     "font-style: normal !important;" +
     "font-weight: bold;" +
-    "text-transform: capitalize;" +
+    "text-transform: capitalize !important;" +
+    "}" +
+    ".gt-times-logo .gt-lowercase {" +
+    "text-transform: lowercase !important;" +
     "}";
 
   var regFonts = {
@@ -336,15 +339,29 @@ v2.2.0
         var pieces = matchLogoAttribution(lineTextWalker(this));
         if (!pieces) return;
 
-        pieces.forEach(function (piece) {
+        pieces.forEach(function (piece, index) {
           var node = piece.node;
           var matchNode = piece.start > 0 ? node.splitText(piece.start) : node;
           if (piece.end - piece.start < matchNode.nodeValue.length) {
             matchNode.splitText(piece.end - piece.start);
           }
-          var span = matchNode.ownerDocument.createElement("span");
+          var doc = matchNode.ownerDocument;
+          var span = doc.createElement("span");
           span.className = "gttm gt-times-logo";
-          span.textContent = matchNode.nodeValue;
+          var text = matchNode.nodeValue;
+
+          // The last piece always ends in "logo". Its last three letters go
+          // in a .gt-lowercase span, so with the outer capitalize any typed
+          // casing ("LOGO", "logo") displays as "Logo" without rewriting it.
+          if (index === pieces.length - 1) {
+            var lower = doc.createElement("span");
+            lower.className = "gt-lowercase";
+            lower.textContent = text.slice(-3);
+            span.textContent = text.slice(0, -3);
+            span.appendChild(lower);
+          } else {
+            span.textContent = text;
+          }
           matchNode.parentNode.replaceChild(span, matchNode);
         });
       });

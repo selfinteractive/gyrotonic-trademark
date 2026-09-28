@@ -14,6 +14,7 @@ class GyrotonicTrademarkTest
     private const CORSIVA = "font-family:'Times New Roman',Times,serif;font-style:italic;font-weight:normal;text-transform:none;";
     private const LOGO = "font-family:'Times New Roman',Times,serif;font-weight:bold;text-transform:capitalize;font-style:normal;";
     private const SUP = "font-size:0.6em;vertical-align:super;line-height:0;";
+    private const LOWER = "text-transform:lowercase;";
 
     public function run(): void
     {
@@ -216,16 +217,22 @@ class GyrotonicTrademarkTest
         echo "GYROTONIC & Logo Attribution:\n";
 
         $result = GyrotonicTrademark::apply('GYROTONIC® &amp; Logo');
-        $this->assertContains('<span style="' . self::LOGO . '">&amp; Logo</span>', $result, 'Encoded &amp; Logo wrapped in gt-times-logo');
+        $this->assertContains('<span style="' . self::LOGO . '">&amp; L<span style="' . self::LOWER . '">ogo</span></span>', $result, 'Encoded &amp; Logo wrapped in gt-times-logo');
         $this->assertNoOrphanedSymbol($result, 'Encoded &amp; Logo - one ®');
 
         $result = GyrotonicTrademark::apply('GYROTONIC® & Logo');
-        $this->assertContains('<span style="' . self::LOGO . '">& Logo</span>', $result, 'Raw & Logo wrapped in gt-times-logo, raw & preserved');
+        $this->assertContains('<span style="' . self::LOGO . '">& L<span style="' . self::LOWER . '">ogo</span></span>', $result, 'Raw & Logo wrapped in gt-times-logo, raw & preserved');
         $this->assertNoOrphanedSymbol($result, 'Raw & Logo - one ®');
 
         $result = GyrotonicTrademark::apply('<em>GYROTONIC</em>® &amp; Logo');
-        $this->assertContains('<span style="' . self::LOGO . '">&amp; Logo</span>', $result, '<em>GYROTONIC</em>® & Logo wrapped');
+        $this->assertContains('<span style="' . self::LOGO . '">&amp; L<span style="' . self::LOWER . '">ogo</span></span>', $result, '<em>GYROTONIC</em>® & Logo wrapped');
         $this->assertNoOrphanedSymbol($result, '<em>GYROTONIC</em>® & Logo - one ®');
+
+        $result = GyrotonicTrademark::apply('GYROTONIC® &amp; LOGO');
+        $this->assertContains('<span style="' . self::LOGO . '">&amp; L<span style="' . self::LOWER . '">OGO</span></span>', $result, 'All-caps LOGO wrapped, trailing letters lowercased for display');
+
+        $result = GyrotonicTrademark::apply('GYROTONIC® &amp; logo');
+        $this->assertContains('<span style="' . self::LOGO . '">&amp; l<span style="' . self::LOWER . '">ogo</span></span>', $result, 'Lowercase logo wrapped, trailing letters lowercased for display');
 
         $result = GyrotonicTrademark::apply('GYROKINESIS & Logo');
         $this->assertNotContains(self::LOGO, $result, 'GYROKINESIS & Logo NOT wrapped');

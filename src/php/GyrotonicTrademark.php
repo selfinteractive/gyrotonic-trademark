@@ -4,7 +4,7 @@ namespace SelfInteractive\GyrotonicTrademark;
 
 class GyrotonicTrademark
 {
-    private const VERSION = '2.2.0';
+    private const VERSION = '2.2.1';
 
     private const REG_SYM = "\u{00AE}";
 
@@ -18,6 +18,7 @@ class GyrotonicTrademark
         'gt-times-normal' => "font-family:'Times New Roman',Times,serif;font-weight:normal;text-transform:uppercase;font-style:normal;",
         'gt-corsiva'      => "font-family:'Times New Roman',Times,serif;font-style:italic;font-weight:normal;text-transform:none;",
         'gt-times-logo'   => "font-family:'Times New Roman',Times,serif;font-weight:bold;text-transform:capitalize;font-style:normal;",
+        'gt-lowercase'    => "text-transform:lowercase;",
     ];
 
     private const SUP_STYLE = 'font-size:0.6em;vertical-align:super;line-height:0;';
@@ -249,8 +250,13 @@ class GyrotonicTrademark
             . '(&amp;|&)(\s*)(logo\b)/ui';
 
         return preg_replace_callback($pattern, function (array $m): string {
+            // "logo" in any casing: capitalize on the outer span raises the
+            // first letter, the inner lowercase span lowers the other three,
+            // so it always displays as "Logo" without rewriting the text.
+            $logo = substr($m[5], 0, 1)
+                . '<span style="' . self::INLINE_STYLES['gt-lowercase'] . '">' . substr($m[5], 1) . '</span>';
             $span = '<span style="' . self::INLINE_STYLES['gt-times-logo'] . '" data-gttm="1">'
-                . $m[3] . $m[4] . $m[5] . '</span>';
+                . $m[3] . $m[4] . $logo . '</span>';
             return $m[1] . $m[2] . $span;
         }, $html);
     }
